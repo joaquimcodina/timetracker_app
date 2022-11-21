@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timetracker_app/page_activities.dart';
+import 'package:timetracker_app/page_intervals.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
             subtitle1: TextStyle(fontSize:20.0),
             bodyText2:TextStyle(fontSize:20.0)),
       ),
-      home: PageActivities()
+        home: PageIntervals() //PageActivities()
     );
   }
 }
