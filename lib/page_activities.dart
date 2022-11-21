@@ -1,3 +1,4 @@
+import 'package:timetracker_app/page_intervals.dart';
 import 'package:timetracker_app/tree.dart';
 import 'package:flutter/material.dart';
 
@@ -45,31 +46,50 @@ class _PageActivitiesState extends State<PageActivities> {
       ),
     );
   }
-}
 
-Widget _buildRow(Activity activity, int index) {
-  String strDuration = Duration(seconds: activity.duration).toString().split('.').first;
-  // split by '.' and taking first element of resulting list
-  // removes the microseconds part
-  assert (activity is Project || activity is Task);
-  if (activity is Project) {
-    return ListTile(
-      title: Text('${activity.name}'),
-      trailing: Text('$strDuration'),
-      onTap: () => {},
-      // TODO, navigate down to show children tasks and projects
-    );
-  } else {
-    Task task = activity as Task;
-    Widget trailing;
-    trailing = Text('$strDuration');
-    return ListTile(
-      title: Text('${activity.name}'),
-      trailing: trailing,
-      onTap: () => {},
-      // TODO, navigate down to show intervals
-      onLongPress: () {},
-      // TODO start/stop counting the time for this task
+  Widget _buildRow(Activity activity, int index) {
+    String strDuration = Duration(seconds: activity.duration)
+        .toString()
+        .split('.')
+        .first;
+    // split by '.' and taking first element of resulting list
+    // removes the microseconds part
+    assert (activity is Project || activity is Task);
+    if (activity is Project) {
+      return ListTile(
+        title: Text('${activity.name}'),
+        trailing: Text('$strDuration'),
+        onTap: () => {},
+        // TODO, navigate down to show children tasks and projects
+      );
+    } else if (activity is Task) {
+      Task task = activity as Task;
+      Widget trailing;
+      trailing = Text('$strDuration');
+      return ListTile(
+        title: Text('${activity.name}'),
+        trailing: trailing,
+        onTap: () => _navigateDownIntervals(index),
+        onLongPress: () {}, // TODO start/stop counting the time for this task
+      );
+    }
+    else {
+      Task task = activity as Task;
+      Widget trailing;
+      trailing = Text('$strDuration');
+      return ListTile(
+        title: Text('${activity.name}'),
+        trailing: trailing,
+        onTap: () => {},
+        // TODO, navigate down to show intervals
+        onLongPress: () {},
+        // TODO start/stop counting the time for this task
+      );
+    }
+  }
+  void _navigateDownIntervals(int childId) {
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (context) => PageIntervals())
     );
   }
 }
