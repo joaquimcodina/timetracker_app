@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetracker_app/page_activities.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,14 +15,7 @@ class MyApp extends StatelessWidget {
             subtitle1: TextStyle(fontSize:20.0),
             bodyText2:TextStyle(fontSize:20.0)),
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('TimeTracker'),
-        ),
-        body: const Center(
-          child: Text('Hello'),
-        ),
-      ),
+      home: PageActivities()
     );
   }
 }
