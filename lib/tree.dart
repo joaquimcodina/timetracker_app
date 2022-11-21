@@ -100,6 +100,18 @@ Tree getTree() {
   return tree;
 }
 
+Tree getTreeTask() {
+  String strJson = "{"
+      "\"name\":\"transportation\",\"class\":\"task\", \"id\":6, \"active\":false, \"initialDate\":\"2020-09-22 13:36:08\", \"finalDate\":\"2020-09-22 13:36:34\", \"duration\":10,"
+      "\"intervals\":["
+      "{\"class\":\"interval\", \"id\":7, \"active\":false, \"initialDate\":\"2020-09-22 13:36:08\", \"finalDate\":\"2020-09-22 13:36:14\", \"duration\":6},"
+      "{\"class\":\"interval\", \"id\":8, \"active\":false, \"initialDate\":\"2020-09-22 13:36:30\", \"finalDate\":\"2020-09-22 13:36:34\", \"duration\":4}"
+      "]}";
+  Map<String, dynamic> decoded = convert.jsonDecode(strJson);
+  Tree tree = Tree(decoded);
+  return tree;
+}
+
 testLoadTree() {
   Tree tree = getTree();
   print("root name ${tree.root.name}, duration ${tree.root.duration}");
