@@ -4,6 +4,7 @@ import 'package:timetracker_app/tree.dart' as Tree hide getTree;
 import 'package:timetracker_app/requests.dart';
 // to avoid collision with an Interval class in another library
 import 'dart:async';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PageIntervals extends StatefulWidget {
   int id;
@@ -71,6 +72,7 @@ class _PageIntervalsState extends State<PageIntervals> {
     // this removes the microseconds part
     String strFinalDate = interval.finalDate.toString().split('.')[0];
     return ListTile(
+      leading: const Icon(MdiIcons.alphaICircle),
       title: Text('from $strInitialDate to $strFinalDate'),
       trailing: Text(strDuration),
     );

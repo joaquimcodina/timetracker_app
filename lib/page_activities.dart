@@ -5,6 +5,7 @@ import 'package:timetracker_app/tree.dart' hide getTree;
 import 'package:timetracker_app/requests.dart';
 // has the new getTree() that sends an http request to the server
 import 'dart:async';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PageActivities extends StatefulWidget {
   int id;
@@ -89,6 +90,7 @@ class _PageActivitiesState extends State<PageActivities> {
     assert (activity is Project || activity is Task);
     if (activity is Project) {
       return ListTile(
+        leading: const Icon(MdiIcons.alphaPCircle),
         title: Text(activity.name),
         trailing: Text(strDuration),
         onTap: () => _navigateDownActivities(activity.id),
@@ -100,6 +102,7 @@ class _PageActivitiesState extends State<PageActivities> {
       trailing = Text(strDuration);
 
       return ListTile(
+        leading: const Icon(MdiIcons.alphaTCircle),
         title: Text(task.name),
         trailing: trailing,
         onTap: () => _navigateDownIntervals(task.id),
