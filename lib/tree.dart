@@ -9,6 +9,7 @@ final DateFormat _dateFormatter = DateFormat("yyyy-MM-dd HH:mm:ss");
 abstract class Activity {
   late int id;
   late String name;
+  List<dynamic> tags = List<dynamic>.empty(growable: true);
   DateTime? initialDate;
   DateTime? finalDate;
   late int duration;
@@ -17,6 +18,7 @@ abstract class Activity {
   Activity.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
+        tags = json['tags'],
         initialDate = json['initialDate']==null ? null : _dateFormatter.parse(json['initialDate']),
         finalDate = json['finalDate']==null ? null : _dateFormatter.parse(json['finalDate']),
         duration = json['duration'];
