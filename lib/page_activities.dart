@@ -6,6 +6,7 @@ import 'package:timetracker_app/requests.dart';
 // has the new getTree() that sends an http request to the server
 import 'dart:async';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:timetracker_app/add_activity.dart';
 
 class PageActivities extends StatefulWidget {
   int id;
@@ -66,6 +67,15 @@ class _PageActivitiesState extends State<PageActivities> {
               itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
               separatorBuilder: (BuildContext context, int index) => const Divider(),
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (context) => const AddActivity(),
+                ));
+              },
+              elevation: 15.0,
+              child: const Icon(Icons.add),
+            ),
           );
         }
         else if (snapshot.hasError){
@@ -92,6 +102,7 @@ class _PageActivitiesState extends State<PageActivities> {
       return ListTile(
         leading: const Icon(MdiIcons.alphaPCircle),
         title: Text(activity.name),
+        subtitle: Text("Tags ${activity.tags}"),
         trailing: Text(strDuration),
         onTap: () => _navigateDownActivities(activity.id),
       );
@@ -104,6 +115,7 @@ class _PageActivitiesState extends State<PageActivities> {
       return ListTile(
         leading: const Icon(MdiIcons.alphaTCircle),
         title: Text(task.name),
+        subtitle: Text("Tags ${activity.tags}"),
         trailing: trailing,
         onTap: () => _navigateDownIntervals(task.id),
         onLongPress: () {
