@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'dart:math';
+import 'package:timetracker_app/requests.dart';
 
 const List<String> type = <String>['Project', 'Task'];
 
 class AddActivity extends StatelessWidget {
-  const AddActivity({super.key});
+  int? id;
+  String? father;
+  AddActivity({super.key, this.father, this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -12,25 +16,34 @@ class AddActivity extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Add Activity'),
       ),
-      body: const MyCustomForm()
+      body: MyCustomForm(father: father, id: id)
     );
   }
 }
 
 // Create a Form widget.
 class MyCustomForm extends StatefulWidget {
-  const MyCustomForm({super.key});
+  int? id;
+  String? father;
+  MyCustomForm({super.key, this.father, this.id});
 
   @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
-  }
+  MyCustomFormState createState() => MyCustomFormState(father: father, id: id);
 }
 
 class MyCustomFormState extends State<MyCustomForm> {
-  late double _distanceToField;
+  int? id;
+  String? father;
+  MyCustomFormState({key, this.father, this.id});
+  final name = TextEditingController();
   late TextfieldTagsController _controller;
+
+  late double _distanceToField;
   final _formKey = GlobalKey<FormState>();
+  String activityName = "";
+  String activityTag = "";
+  String typeSelected = "Project";
+  Map<String, dynamic> newActivity = {};
 
   @override
   void didChangeDependencies() {
@@ -41,7 +54,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _controller.dispose(); //tags controller
+    name.dispose();
   }
 
   @override
@@ -59,6 +73,8 @@ class MyCustomFormState extends State<MyCustomForm> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: TextFormField(
+                onSaved: (newValue) => activityName = newValue!,
+                controller: name,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please, enter activity name';
@@ -75,9 +91,17 @@ class MyCustomFormState extends State<MyCustomForm> {
               children: <Widget> [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: Text("Father: ${father!}"),
+                ), //Content Report
+              ],
+            ),
+            Row(
+              children: <Widget> [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: const Text("Type"),
                 ),
-                const DropdownType(), //Content Report
+                DropdownType(onChanged: (String? value) { typeSelected = value!; },)
               ],
             ),
             TextFieldTags(
@@ -114,7 +138,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         helperStyle: const TextStyle(
                           color: Colors.blue,
                         ),
-                        hintText: _controller.hasTags ? '' : "Enter tag...",
+                        hintText: _controller.hasTags ? '' : "Enter tags...",
                         errorText: error,
                         prefixIconConstraints:
                         BoxConstraints(maxWidth: _distanceToField * 0.74),
@@ -188,12 +212,29 @@ class MyCustomFormState extends State<MyCustomForm> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Validate returns true if the form is valid, or false otherwise.
-                      if (_formKey.currentState!.validate()) { //----DONA ERROR----. DONA SEMPRE NULL
+                      if (_formKey.currentState!.validate()) {
                         // If the form is valid, display a snackbar. In the real world,
                         // you'd often call a server or save the information in a database.
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Processing Data')),
                         );
+                        _formKey.currentState!.save(); //guarda tots els elements del formulari
+                        if (newActivity['class'] == "Project"){ //class = project
+                          newActivity['name'] = activityName;
+                          newActivity['id'] = Random().nextInt(99999999) + 1;
+                          newActivity['class'] = typeSelected;
+                          newActivity['tags'] = _controller.getTags;
+                          newActivity['father'] = id;
+                        }
+                        else{ //class = task
+                          newActivity['name'] = activityName;
+                          newActivity['id'] = Random().nextInt(99999999) + 1;
+                          newActivity['class'] = typeSelected;
+                          newActivity['tags'] = _controller.getTags;
+                          newActivity['father'] = id;
+                        }
+                        addActivity(newActivity);
+                        Navigator.of(context).pop();
                       }
                     },
                     child: const Text('Submit'),
@@ -208,7 +249,9 @@ class MyCustomFormState extends State<MyCustomForm> {
 }
 
 class DropdownType extends StatefulWidget {
-  const DropdownType({super.key});
+  final ValueChanged<String?>? onChanged;
+  const DropdownType({super.key, required this.onChanged});
+
   @override
   State<DropdownType> createState() => _DropdownTypeState();
 }
@@ -221,18 +264,19 @@ class _DropdownTypeState extends State<DropdownType> {
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
-      onChanged: (String? value) {
+      /*onChanged: (String? value) {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
         });
-      },
+      },*/
       items: type.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
         );
       }).toList(),
+      onChanged: widget.onChanged,
     );
   }
 }

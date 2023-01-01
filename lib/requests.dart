@@ -6,7 +6,7 @@ final http.Client client = http.Client();
 // better than http.get() if multiple requests to the same server
 
 // If you connect the Android emulator to the webserver listening to localhost:8080
-const String baseUrl = "https://48a5-37-14-46-30.ngrok.io";
+const String baseUrl = "https://3d45-37-14-46-30.ngrok.io";
 
 // If instead you want to use a real phone, you need ngrok to redirect
 // localhost:8080 to some temporal Url that ngrok.com provides for free: run
@@ -49,6 +49,24 @@ Future<void> start(int id) async {
 Future<void> stop(int id) async {
   String uri = "$baseUrl/stop?$id";
   final response = await client.get(Uri.parse(uri));
+  if (response.statusCode == 200) {
+    print("statusCode=$response.statusCode");
+  } else {
+    print("statusCode=$response.statusCode");
+    throw Exception('Failed to get children');
+  }
+}
+
+Future<void> addActivity(Map<String, dynamic> newActivity) async {
+  int id = newActivity['id'];
+  String name = newActivity['name'];
+  int father = newActivity['father'];
+  String type = newActivity['class'];
+  List<String> tags = newActivity['tags'];
+
+  var uri = Uri.parse("$baseUrl/add?$name&$father&$type&$tags&$id");
+  final response = await client.get(uri);
+
   if (response.statusCode == 200) {
     print("statusCode=$response.statusCode");
   } else {

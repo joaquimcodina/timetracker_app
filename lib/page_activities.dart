@@ -70,7 +70,7 @@ class _PageActivitiesState extends State<PageActivities> {
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute<void>(
-                  builder: (context) => const AddActivity(),
+                  builder: (context) => AddActivity(father: snapshot.data!.root.name, id: snapshot.data!.root.id),
                 ));
               },
               elevation: 15.0,
