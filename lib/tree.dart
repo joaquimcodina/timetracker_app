@@ -9,6 +9,7 @@ final DateFormat _dateFormatter = DateFormat("yyyy-MM-dd HH:mm:ss");
 abstract class Activity {
   late int id;
   late String name;
+  late String father;
   List<dynamic> tags = List<dynamic>.empty(growable: true);
   DateTime? initialDate;
   DateTime? finalDate;
@@ -18,6 +19,7 @@ abstract class Activity {
   Activity.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
+        father = json['father'] ?? "",
         tags = json['tags'],
         initialDate = json['initialDate']==null ? null : _dateFormatter.parse(json['initialDate']),
         finalDate = json['finalDate']==null ? null : _dateFormatter.parse(json['finalDate']),
@@ -57,6 +59,7 @@ class Task extends Activity {
 
 class Interval {
   late int id;
+  late String father;
   DateTime? initialDate;
   DateTime? finalDate;
   late int duration;
@@ -64,6 +67,7 @@ class Interval {
 
   Interval.fromJson(Map<String, dynamic> json)
       : id = json['id'],
+        father = json['father'] ?? "",
         initialDate = json['initialDate']==null ? null : _dateFormatter.parse(json['initialDate']),
         finalDate = json['finalDate']==null ? null : _dateFormatter.parse(json['finalDate']),
         duration = json['duration'],

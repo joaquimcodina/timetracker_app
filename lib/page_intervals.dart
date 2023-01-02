@@ -43,12 +43,44 @@ class _PageIntervalsState extends State<PageIntervals> {
             appBar: AppBar(
               title: Text(snapshot.data!.root.name),
             ),
-            body: ListView.separated(
-              //it's like ListView.builder() but better because it includes a separator between items
-              padding: const EdgeInsets.all(16.0),
-              itemCount: numChildren,
-              itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
+            body: Column (
+                children: <Widget>[
+                  Row(
+                      children: <Widget>[
+                        Text('Father: ${snapshot.data!.root.father.toString().split("\t")[0]}\n'),
+                      ]
+                  ),
+                  Row(
+                      children: <Widget>[
+                        Text('Initial Date: ${snapshot.data!.root.initialDate}\n'),
+                      ]
+                  ),
+                  Row(
+                      children: <Widget>[
+                        Text('Final Date: ${snapshot.data!.root.finalDate}\n'),
+                      ]
+                  ),
+                  Row(
+                      children: <Widget>[
+                        Text('Duration: ${snapshot.data!.root.duration} seconds\n'),
+                      ]
+                  ),
+                  snapshot.data!.root.tags.isNotEmpty ?
+                  Row(
+                      children: <Widget>[
+                        Text('Tags: ${snapshot.data!.root.tags}'),
+                      ]
+                  ) : Row(),
+                  Expanded(
+                    child: ListView.separated(
+                      //it's like ListView.builder() but better because it includes a separator between items
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: numChildren,
+                      itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
+                      separatorBuilder: (BuildContext context, int index) => const Divider(),
+                    ),
+                  )
+                ]
             ),
           );
         }
@@ -73,7 +105,7 @@ class _PageIntervalsState extends State<PageIntervals> {
     String strFinalDate = interval.finalDate.toString().split('.')[0];
     return ListTile(
       leading: const Icon(MdiIcons.alphaICircle),
-      title: Text('from $strInitialDate to $strFinalDate'),
+      title: Text('Initial Date: $strInitialDate\nFinal Date: $strFinalDate'),
       trailing: Text(strDuration),
     );
   }

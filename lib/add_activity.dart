@@ -264,12 +264,6 @@ class _DropdownTypeState extends State<DropdownType> {
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
-      /*onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-        });
-      },*/
       items: type.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,

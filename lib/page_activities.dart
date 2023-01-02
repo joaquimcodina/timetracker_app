@@ -60,12 +60,45 @@ class _PageActivitiesState extends State<PageActivities> {
                 ),
               ],
             ),
-            body: ListView.separated(
-              //it's like ListView.builder() but better because it includes a separator between items
-              padding: const EdgeInsets.all(16.0),
-              itemCount: snapshot.data!.root.children.length,
-              itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
+            body: Column (
+              children: <Widget>[
+                snapshot.data!.root.father.toString().split("\t")[0] != "" ?
+                Row(
+                    children: <Widget>[
+                      Text('Father: ${snapshot.data!.root.father.toString().split("\t")[0]}\n'),
+                    ]
+                ) : Row(),
+                Row(
+                    children: <Widget>[
+                      Text('Initial Date: ${snapshot.data!.root.initialDate}\n'),
+                    ]
+                ),
+                Row(
+                    children: <Widget>[
+                      Text('Final Date: ${snapshot.data!.root.finalDate}\n'),
+                    ]
+                ),
+                Row(
+                    children: <Widget>[
+                      Text('Duration: ${snapshot.data!.root.duration} seconds\n'),
+                    ]
+                ),
+                snapshot.data!.root.tags.isNotEmpty ?
+                Row(
+                    children: <Widget>[
+                      Text('Tags: ${snapshot.data!.root.tags}'),
+                    ]
+                ) : Row(),
+                Expanded(
+                  child: ListView.separated(
+                    //it's like ListView.builder() but better because it includes a separator between items
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: snapshot.data!.root.children.length,
+                    itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
+                    separatorBuilder: (BuildContext context, int index) => const Divider(),
+                  ),
+                )
+              ]
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
