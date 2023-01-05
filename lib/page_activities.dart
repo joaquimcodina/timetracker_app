@@ -140,27 +140,48 @@ class _PageActivitiesState extends State<PageActivities> {
         onTap: () => _navigateDownActivities(activity.id),
       );
     }
-    else {
+else {
       Task task = activity as Task;
       Widget trailing;
       trailing = Text(strDuration);
+      bool isActive = task.active;
 
       return ListTile(
         leading: const Icon(MdiIcons.alphaTCircle),
         title: Text(task.name),
         subtitle: Text("Tags ${activity.tags}"),
-        trailing: trailing,
-        onTap: () => _navigateDownIntervals(task.id),
-        onLongPress: () {
-          if (task.active){
-            stop(task.id);
-            _refresh();
-          }
-          else {
-            start(task.id);
-            _refresh();
-          }
-        },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () {
+                if (isActive) {
+                  setState(() {
+                    isActive = false;
+                  });
+
+                  stop(task.id);
+                } else {
+                  setState(() {
+                    isActive = true;
+                  });
+
+                  start(task.id);
+                }
+                _refresh();
+              },
+              icon: isActive
+                ? Icon(MdiIcons.pause)
+                  : Icon(
+                MdiIcons.play,
+              ),
+            ),
+            trailing,
+          ],
+        ),
+        onTap: () {
+          _navigateDownIntervals(task.id);
+          },
       );
     }
   }
