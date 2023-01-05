@@ -221,14 +221,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                         _formKey.currentState!.save(); //guarda tots els elements del formulari
                         if (newActivity['class'] == "Project"){ //class = project
                           newActivity['name'] = activityName;
-                          newActivity['id'] = Random().nextInt(99999999) + 1;
+                          newActivity['id'] = Random().nextInt(99999999) + 10;
                           newActivity['class'] = typeSelected;
                           newActivity['tags'] = _controller.getTags;
                           newActivity['father'] = id;
                         }
                         else{ //class = task
                           newActivity['name'] = activityName;
-                          newActivity['id'] = Random().nextInt(99999999) + 1;
+                          newActivity['id'] = Random().nextInt(99999999) + 10;
                           newActivity['class'] = typeSelected;
                           newActivity['tags'] = _controller.getTags;
                           newActivity['father'] = id;
