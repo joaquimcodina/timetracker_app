@@ -45,26 +45,29 @@ class _PageIntervalsState extends State<PageIntervals> {
             ),
             body: Column (
                 children: <Widget>[
+                  snapshot.data!.root.father.toString().split("\t")[0] != "" ?
                   Row(
                       children: <Widget>[
                         Text('Father: ${snapshot.data!.root.father.toString().split("\t")[0]}\n'),
                       ]
-                  ),
-                  Row(
+                  ) : Row(),
+                  snapshot.data!.root.initialDate!=null ? Row(
                       children: <Widget>[
                         Text('Initial Date: ${snapshot.data!.root.initialDate}\n'),
                       ]
-                  ),
+                  ) : Row(),
+                  snapshot.data!.root.finalDate!=null ?
                   Row(
                       children: <Widget>[
                         Text('Final Date: ${snapshot.data!.root.finalDate}\n'),
                       ]
-                  ),
+                  ) : Row(),
+                  snapshot.data!.root.duration!=0 ?
                   Row(
                       children: <Widget>[
                         Text('Duration: ${snapshot.data!.root.duration} seconds\n'),
                       ]
-                  ),
+                  ) : Row(),
                   snapshot.data!.root.tags.isNotEmpty ?
                   Row(
                       children: <Widget>[
@@ -106,7 +109,13 @@ class _PageIntervalsState extends State<PageIntervals> {
     return ListTile(
       leading: const Icon(MdiIcons.alphaICircle),
       title: Text('Initial Date: $strInitialDate\nFinal Date: $strFinalDate'),
-      trailing: Text(strDuration),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          strFinalDate.contains("null") ? const Icon(MdiIcons.clock, color: Colors.blue) : const Icon(null),
+          Text(strDuration),
+        ],
+      ),
     );
   }
 

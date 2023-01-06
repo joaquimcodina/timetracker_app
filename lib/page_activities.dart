@@ -68,21 +68,23 @@ class _PageActivitiesState extends State<PageActivities> {
                       Text('Father: ${snapshot.data!.root.father.toString().split("\t")[0]}\n'),
                     ]
                 ) : Row(),
-                Row(
+                snapshot.data!.root.initialDate!=null ? Row(
                     children: <Widget>[
                       Text('Initial Date: ${snapshot.data!.root.initialDate}\n'),
                     ]
-                ),
+                ) : Row(),
+                snapshot.data!.root.finalDate!=null ?
                 Row(
                     children: <Widget>[
                       Text('Final Date: ${snapshot.data!.root.finalDate}\n'),
                     ]
-                ),
+                ) : Row(),
+                snapshot.data!.root.duration!=0 ?
                 Row(
                     children: <Widget>[
                       Text('Duration: ${snapshot.data!.root.duration} seconds\n'),
                     ]
-                ),
+                ) : Row(),
                 snapshot.data!.root.tags.isNotEmpty ?
                 Row(
                     children: <Widget>[
@@ -140,50 +142,46 @@ class _PageActivitiesState extends State<PageActivities> {
         onTap: () => _navigateDownActivities(activity.id),
       );
     }
-else {
-      Task task = activity as Task;
-      Widget trailing;
-      trailing = Text(strDuration);
-      bool isActive = task.active;
+    else {
+        Task task = activity as Task;
+        Widget trailing;
+        trailing = Text(strDuration);
+        bool isActive = task.active;
 
-      return ListTile(
-        leading: const Icon(MdiIcons.alphaTCircle),
-        title: Text(task.name),
-        subtitle: Text("Tags ${activity.tags}"),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () {
-                if (isActive) {
-                  setState(() {
-                    isActive = false;
-                  });
+        return ListTile(
+          leading: const Icon(MdiIcons.alphaTCircle),
+          title: Text(task.name),
+          subtitle: Text("Tags ${activity.tags}"),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () {
+                  if (isActive) {
+                    setState(() {
+                      isActive = false;
+                    });
+                    stop(task.id);
 
-                  stop(task.id);
-                } else {
-                  setState(() {
-                    isActive = true;
-                  });
-
-                  start(task.id);
-                }
-                _refresh();
-              },
-              icon: isActive
-                ? Icon(MdiIcons.pause)
-                  : Icon(
-                MdiIcons.play,
+                  } else {
+                    setState(() {
+                      isActive = true;
+                    });
+                    start(task.id);
+                  }
+                  _refresh();
+                },
+                icon: isActive ? const Icon(MdiIcons.pause) : const Icon(MdiIcons.play),
               ),
-            ),
-            trailing,
-          ],
-        ),
-        onTap: () {
-          _navigateDownIntervals(task.id);
-          },
-      );
-    }
+              isActive ? const Icon(MdiIcons.clock, color: Colors.blue) : const Icon(null),
+              trailing,
+            ],
+          ),
+          onTap: () {
+            _navigateDownIntervals(task.id);
+            },
+        );
+      }
   }
 
   void _navigateDownActivities(int childId) {
