@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:timetracker_app/requests.dart';
 
 const List<String> type = <String>['Project', 'Task'];
+String typeSelected = "Project";
 
 class AddActivity extends StatelessWidget {
   int? id;
@@ -42,7 +43,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   String activityName = "";
   String activityTag = "";
-  String typeSelected = "Project";
+  //String typeSelected = "Project";
   Map<String, dynamic> newActivity = {};
 
   @override
@@ -235,6 +236,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         }
                         addActivity(newActivity);
                         Navigator.of(context).pop();
+                        typeSelected = "Project";
                       }
                     },
                     child: const Text('Submit'),
@@ -264,13 +266,20 @@ class _DropdownTypeState extends State<DropdownType> {
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
+      onChanged: (String? value) {
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value!;
+          typeSelected = dropdownValue;
+        });
+      },
       items: type.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
         );
       }).toList(),
-      onChanged: widget.onChanged,
+      //onChanged: widget.onChanged,
     );
   }
 }
