@@ -49,6 +49,15 @@ class _PageActivitiesState extends State<PageActivities> {
             appBar: AppBar(
               title: snapshot.data!.root.id == 0 ? const Text("TimeTracker") : Text(snapshot.data!.root.name),
               actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: CustomSearchDelegate(),
+                    );
+                  },
+                ),
                 IconButton(icon: const Icon(Icons.home),
                   onPressed: () {
                     while(Navigator.of(context).canPop()){
@@ -134,54 +143,61 @@ class _PageActivitiesState extends State<PageActivities> {
     // removes the microseconds part
     assert (activity is Project || activity is Task);
     if (activity is Project) {
+      bool isActive = activity.active;
       return ListTile(
         leading: const Icon(MdiIcons.alphaPCircle),
         title: Text(activity.name),
         subtitle: Text("Tags ${activity.tags}"),
-        trailing: Text(strDuration),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(onPressed: () {}, icon : isActive ? const Icon(MdiIcons.clock, color: Colors.blue) : const Icon(null)),
+            Text(strDuration)
+          ],
+        ),
         onTap: () => _navigateDownActivities(activity.id),
       );
     }
     else {
-        Task task = activity as Task;
-        Widget trailing;
-        trailing = Text(strDuration);
-        bool isActive = task.active;
+      Task task = activity as Task;
+      Widget trailing;
+      trailing = Text(strDuration);
+      bool isActive = task.active;
 
-        return ListTile(
-          leading: const Icon(MdiIcons.alphaTCircle),
-          title: Text(task.name),
-          subtitle: Text("Tags ${activity.tags}"),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: () {
-                  if (isActive) {
-                    setState(() {
-                      isActive = false;
-                    });
-                    stop(task.id);
+      return ListTile(
+        leading: const Icon(MdiIcons.alphaTCircle),
+        title: Text(task.name),
+        subtitle: Text("Tags ${task.tags}"),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () {
+                if (isActive) {
+                  setState(() {
+                    isActive = false;
+                  });
+                  stop(task.id);
 
-                  } else {
-                    setState(() {
-                      isActive = true;
-                    });
-                    start(task.id);
-                  }
-                  _refresh();
-                },
-                icon: isActive ? const Icon(MdiIcons.pause) : const Icon(MdiIcons.play),
-              ),
-              isActive ? const Icon(MdiIcons.clock, color: Colors.blue) : const Icon(null),
-              trailing,
-            ],
-          ),
-          onTap: () {
-            _navigateDownIntervals(task.id);
-            },
-        );
-      }
+                } else {
+                  setState(() {
+                    isActive = true;
+                  });
+                  start(task.id);
+                }
+                _refresh();
+              },
+              icon: isActive ? const Icon(MdiIcons.pause) : const Icon(MdiIcons.play),
+            ),
+            isActive ? const Icon(MdiIcons.clock, color: Colors.blue) : const Icon(null),
+            trailing,
+          ],
+        ),
+        onTap: () {
+          _navigateDownIntervals(task.id);
+        },
+      );
+    }
   }
 
   void _navigateDownActivities(int childId) {
@@ -224,5 +240,31 @@ class _PageActivitiesState extends State<PageActivities> {
     // therefore when going up
     _timer.cancel();
     super.dispose();
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    // TODO: implement buildActions
+    return null;
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    // TODO: implement buildLeading
+    return null;
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    return Column();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: implement buildSuggestions
+    return Column();
   }
 }
