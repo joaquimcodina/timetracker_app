@@ -1,12 +1,12 @@
-import 'package:timetracker_app/page_intervals.dart';
+import 'package:flutter_tests/page_intervals.dart';
 import 'package:flutter/material.dart';
-import 'package:timetracker_app/tree.dart' hide getTree;
+import 'package:flutter_tests/tree.dart' hide getTree;
 // the old getTree()
-import 'package:timetracker_app/requests.dart';
+import 'package:flutter_tests/requests.dart';
 // has the new getTree() that sends an http request to the server
 import 'dart:async';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:timetracker_app/add_activity.dart';
+import 'package:flutter_tests/add_activity.dart';
 
 class PageActivities extends StatefulWidget {
   int id;
@@ -40,100 +40,100 @@ class _PageActivitiesState extends State<PageActivities> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Tree>(
-      future: futureTree,
-      //this makes the tree of children, when available, go intro snapshop.data
-      builder: (context, snapshot) {
-        //anonymous function
-        if(snapshot.hasData){
-          return Scaffold(
-            appBar: AppBar(
-              title: snapshot.data!.root.id == 0 ? const Text("TimeTracker") : Text(snapshot.data!.root.name),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: CustomSearchDelegate(),
-                    );
-                  },
-                ),
-                IconButton(icon: const Icon(Icons.home),
-                  onPressed: () {
-                    while(Navigator.of(context).canPop()){
-                      print("pop");
-                      Navigator.of(context).pop();
-                    }
-                    PageActivities(0);
-                  }
-                ),
-              ],
-            ),
-            body: Column (
-              children: <Widget>[
-                snapshot.data!.root.father.toString().split("\t")[0] != "" ?
-                Row(
-                    children: <Widget>[
-                      Text('Father: ${snapshot.data!.root.father.toString().split("\t")[0]}\n'),
-                    ]
-                ) : Row(),
-                snapshot.data!.root.initialDate!=null ? Row(
-                    children: <Widget>[
-                      Text('Initial Date: ${snapshot.data!.root.initialDate}\n'),
-                    ]
-                ) : Row(),
-                snapshot.data!.root.finalDate!=null ?
-                Row(
-                    children: <Widget>[
-                      Text('Final Date: ${snapshot.data!.root.finalDate}\n'),
-                    ]
-                ) : Row(),
-                snapshot.data!.root.duration!=0 ?
-                Row(
-                    children: <Widget>[
-                      Text('Duration: ${snapshot.data!.root.duration} seconds\n'),
-                    ]
-                ) : Row(),
-                snapshot.data!.root.tags.isNotEmpty ?
-                Row(
-                    children: <Widget>[
-                      Text('Tags: ${snapshot.data!.root.tags}'),
-                    ]
-                ) : Row(),
-                Expanded(
-                  child: ListView.separated(
-                    //it's like ListView.builder() but better because it includes a separator between items
-                    padding: const EdgeInsets.all(16.0),
-                    itemCount: snapshot.data!.root.children.length,
-                    itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
-                    separatorBuilder: (BuildContext context, int index) => const Divider(),
+        future: futureTree,
+        //this makes the tree of children, when available, go intro snapshop.data
+        builder: (context, snapshot) {
+          //anonymous function
+          if(snapshot.hasData){
+            return Scaffold(
+              appBar: AppBar(
+                title: snapshot.data!.root.id == 0 ? const Text("TimeTracker") : Text(snapshot.data!.root.name),
+                actions: <Widget>[
+                  IconButton( //lupa
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      showSearch(
+                        context: context,
+                        delegate: CustomSearchDelegate(),
+                      );
+                    },
                   ),
-                )
-              ]
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute<void>(
-                  builder: (context) => AddActivity(father: snapshot.data!.root.name, id: snapshot.data!.root.id),
-                ));
-              },
-              elevation: 15.0,
-              child: const Icon(Icons.add),
-            ),
+                  IconButton(icon: const Icon(Icons.home),
+                      onPressed: () {
+                        while(Navigator.of(context).canPop()){
+                          print("pop");
+                          Navigator.of(context).pop();
+                        }
+                        PageActivities(0);
+                      }
+                  ),
+                ],
+              ),
+              body: Column (
+                  children: <Widget>[
+                    snapshot.data!.root.father.toString().split("\t")[0] != "" ?
+                    Row(
+                        children: <Widget>[
+                          Text('Father: ${snapshot.data!.root.father.toString().split("\t")[0]}\n'),
+                        ]
+                    ) : Row(),
+                    snapshot.data!.root.initialDate!=null ? Row(
+                        children: <Widget>[
+                          Text('Initial Date: ${snapshot.data!.root.initialDate}\n'),
+                        ]
+                    ) : Row(),
+                    snapshot.data!.root.finalDate!=null ?
+                    Row(
+                        children: <Widget>[
+                          Text('Final Date: ${snapshot.data!.root.finalDate}\n'),
+                        ]
+                    ) : Row(),
+                    snapshot.data!.root.duration!=0 ?
+                    Row(
+                        children: <Widget>[
+                          Text('Duration: ${snapshot.data!.root.duration} seconds\n'),
+                        ]
+                    ) : Row(),
+                    snapshot.data!.root.tags.isNotEmpty ?
+                    Row(
+                        children: <Widget>[
+                          Text('Tags: ${snapshot.data!.root.tags}'),
+                        ]
+                    ) : Row(),
+                    Expanded(
+                      child: ListView.separated(
+                        //it's like ListView.builder() but better because it includes a separator between items
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: snapshot.data!.root.children.length,
+                        itemBuilder: (BuildContext context, int index) => _buildRow(snapshot.data!.root.children[index], index),
+                        separatorBuilder: (BuildContext context, int index) => const Divider(),
+                      ),
+                    )
+                  ]
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (context) => AddActivity(father: snapshot.data!.root.name, id: snapshot.data!.root.id),
+                  ));
+                },
+                elevation: 15.0,
+                child: const Icon(Icons.add),
+              ),
+            );
+          }
+          else if (snapshot.hasError){
+            return Text("${snapshot.error}");
+          }
+          //By default, show a progress indicator
+          return Container(
+              height: MediaQuery.of(context).size.height,
+              color: Colors.white,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              )
           );
         }
-        else if (snapshot.hasError){
-          return Text("${snapshot.error}");
-        }
-        //By default, show a progress indicator
-        return Container(
-          height: MediaQuery.of(context).size.height,
-          color: Colors.white,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          )
-        );
-      }
     );
   }
 
@@ -245,26 +245,54 @@ class _PageActivitiesState extends State<PageActivities> {
 
 class CustomSearchDelegate extends SearchDelegate {
   @override
-  List<Widget>? buildActions(BuildContext context) {
-    // TODO: implement buildActions
-    return null;
-  }
+  List<Widget>? buildActions(BuildContext context) => [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {query='';},
+      ),
+    ];
+
 
   @override
-  Widget? buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
-    return null;
-  }
+  Widget? buildLeading(BuildContext context) => null;
+    /*  IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () {}
+  );*/
 
   @override
   Widget buildResults(BuildContext context) {
+    int unusedId = -1;
     // TODO: implement buildResults
-    return Column();
+    late var futureTree = getTree(unusedId, tag: query);
+    return PageActivities(1);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    return Column();
+    final suggestions =  ['SQL', 'java', 'python', 'c++', 'flutter'];
+    return buildSuggestionsSuccess(suggestions);
+  }
+
+  Widget buildSuggestionsSuccess(List<String> suggestions) => ListView.builder(
+    itemCount: suggestions.length,
+    itemBuilder: (context, index) {
+      final suggestion = suggestions[index];
+      return ListTile(
+        title: Text(suggestion),
+        onTap: () {
+          query = suggestion;
+          showResults(context);
+        },
+      );
+    },
+  );
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    assert(context != null);
+    final ThemeData theme = Theme.of(context);
+    assert(theme != null);
+    return theme;
   }
 }
