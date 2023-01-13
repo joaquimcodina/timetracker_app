@@ -52,10 +52,7 @@ class _PageActivitiesState extends State<PageActivities> {
                 IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: CustomSearchDelegate(),
-                    );
+                    showSearch(context: context, delegate: SearchByTag());
                   },
                 ),
                 IconButton(icon: const Icon(Icons.home),
@@ -243,28 +240,184 @@ class _PageActivitiesState extends State<PageActivities> {
   }
 }
 
-class CustomSearchDelegate extends SearchDelegate {
+class SearchByTag extends SearchDelegate<String> {
   @override
-  List<Widget>? buildActions(BuildContext context) {
-    // TODO: implement buildActions
-    return null;
-  }
+  List<Widget> buildActions(BuildContext context) => [
+    IconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: () {
+        if (query.isEmpty) {
+          close(context, '');
+        } else {
+          query = '';
+          showSuggestions(context);
+        }
+      },
+    )
+  ];
 
   @override
-  Widget? buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
-    return null;
-  }
+  Widget buildLeading(BuildContext context) => IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () => close(context, ''),
+  );
 
   @override
-  Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    return Column();
-  }
+  Widget buildResults(BuildContext context) => FutureBuilder<Tree> (
+    future: getTree(int.parse(query)),
+    builder: (context, snapshot) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.waiting:
+          return const Center(child: CircularProgressIndicator());
+        default:
+          if (snapshot.hasError) {
+            return Container (
+              color: Colors.white,
+              alignment: Alignment.center,
+              child: const Text (
+                'Something went wrong!',
+                style: TextStyle(fontSize: 28, color: Colors.black),
+              )
+            );
+          }
+          else{
+            return buildResultSuccess(snapshot.data!);
+          }
+      }
+    },
+  );
 
   @override
-  Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    return Column();
+  Widget buildSuggestions(BuildContext context) => FutureBuilder<List<String>>(
+    future: searchByTag(query: query),
+    builder: (context, snapshot) {
+      if (query.isEmpty) return buildNotSuggestions();
+      switch (snapshot.connectionState) {
+        case ConnectionState.waiting:
+          return const Center(child: CircularProgressIndicator());
+        default:
+          if(snapshot.hasError || snapshot.data!.isEmpty){
+            return buildNotSuggestions();
+          }
+          else{
+            return buildSuggestionsSuccess(snapshot.data!);
+          }
+      }
+    },
+  );
+
+  Widget buildNotSuggestions() => const Center(
+      child: Text(
+        'No results!',
+        style: TextStyle(fontSize: 28, color: Colors.black),
+      )
+  );
+
+  Widget buildSuggestionsSuccess(List<String> suggestions) => ListView.builder(
+    itemCount: suggestions.length,
+    itemBuilder: (context, index) {
+      final suggestion = suggestions[index];
+      List<String> data = suggestion.toString().split(',');
+
+      return ListTile(
+        onTap: () {
+          query = data[0];
+          showResults(context);
+        },
+        leading: data[2]=='project' ? const Icon(MdiIcons.alphaPCircle) : const Icon(MdiIcons.alphaTCircle),
+        title: RichText(
+          text: TextSpan(
+            text: data[1],
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+        ),
+      );
+    },
+  );
+
+  Widget buildResultSuccess(Tree tree) => ListView(
+    children: [
+      Column (
+          children: <Widget>[
+            tree.root.father.toString().split("\t")[0] != "" ?
+            Row(
+                children: <Widget>[
+                  Text('Father: ${tree.root.father.toString().split("\t")[0]}\n'),
+                ]
+            ) : Row(),
+            tree.root.initialDate!=null ? Row(
+                children: <Widget>[
+                  Text('Initial Date: ${tree.root.initialDate}\n'),
+                ]
+            ) : Row(),
+            tree.root.finalDate!=null ?
+            Row(
+                children: <Widget>[
+                  Text('Final Date: ${tree.root.finalDate}\n'),
+                ]
+            ) : Row(),
+            tree.root.duration!=0 ?
+            Row(
+                children: <Widget>[
+                  Text('Duration: ${tree.root.duration} seconds\n'),
+                ]
+            ) : Row(),
+            tree.root.tags.isNotEmpty ?
+            Row(
+                children: <Widget>[
+                  Text('Tags: ${tree.root.tags}'),
+                ]
+            ) : Row(),
+            /*Expanded(
+              child: ListView.separated(
+                //it's like ListView.builder() but better because it includes a separator between items
+                padding: const EdgeInsets.all(16.0),
+                itemCount: tree.root.children.length,
+                itemBuilder: (BuildContext context, int index) => listChild(tree.root.children[index], index),
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
+              ),
+            )*/
+          ]
+      ),
+    ],
+  );
+
+  Widget listChild(Activity activity, int index) {
+    String strDuration = Duration(seconds: activity.duration).toString().split('.').first;
+    assert (activity is Project || activity is Task);
+    if (activity is Project) {
+      return ListTile(
+        leading: const Icon(MdiIcons.alphaPCircle),
+        title: Text(activity.name),
+        subtitle: Text("Tags ${activity.tags}"),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(strDuration)
+          ],
+        ),
+      );
+    }
+    else {
+      Task task = activity as Task;
+      Widget trailing;
+      trailing = Text(strDuration);
+
+      return ListTile(
+        leading: const Icon(MdiIcons.alphaTCircle),
+        title: Text(task.name),
+        subtitle: Text("Tags ${task.tags}"),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            trailing,
+          ],
+        ),
+      );
+    }
   }
 }

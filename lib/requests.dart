@@ -6,7 +6,8 @@ final http.Client client = http.Client();
 // better than http.get() if multiple requests to the same server
 
 // If you connect the Android emulator to the webserver listening to localhost:8080
-const String baseUrl = "https://4ade-37-14-46-30.ngrok.io";
+const String baseUrl = "https://d956-37-14-46-30.ngrok.io";
+List<String> children = List<String>.empty(growable: true);
 
 // If instead you want to use a real phone, you need ngrok to redirect
 // localhost:8080 to some temporal Url that ngrok.com provides for free: run
@@ -44,10 +45,32 @@ void manageResponse(response) {
   }
 }
 
-Future<void> searchByTag(String tag) async {
-  String uri = "$baseUrl/searchByTag?$tag";
-  final response = await client.get(Uri.parse(uri));
-  manageResponse(response);
+Future<List<String>> searchByTag({required String query}) async {
+  String url = '$baseUrl/searchByTag?$query';
+  final response = await client.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    print("statusCode=$response.statusCode");
+    print(response.body);
+    // If the server did return a 200 OK response, then parse the JSON.
+
+    List<String> activities = [];
+    Map<String, dynamic> decoded = convert.jsonDecode(response.body);
+    List<dynamic> dataBody = decoded["activities"];
+
+    for(int i = 0; i < dataBody.length; i++) {
+      int id = dataBody[i]['id'];
+      String name = dataBody[i]['name'];
+      String type = dataBody[i]['class'];
+      String idString = id.toString();
+      activities.add('$idString,$name,$type');
+    }
+    return activities;
+
+  } else {
+    // If the server did not return a 200 OK response, then throw an exception.
+    print("statusCode=$response.statusCode");
+    throw Exception('Failed to get children');
+  }
 }
 
 Future<void> start(int id) async {
